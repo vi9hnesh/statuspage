@@ -14,7 +14,7 @@ export default function NotFound() {
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-sm text-muted-foreground">
-              The status page you're looking for doesn't exist or may have been moved.
+              The status page you&apos;re looking for doesn&apos;t exist or may have been moved.
             </p>
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">

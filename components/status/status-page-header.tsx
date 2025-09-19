@@ -2,6 +2,7 @@
 
 import { useStatusPageData } from "./status-page-provider"
 import type { StatusSummary } from "./types"
+import Image from "next/image"
 
 interface StatusPageHeaderProps {
   slug: string
@@ -11,42 +12,44 @@ export function StatusPageHeader({ slug }: StatusPageHeaderProps) {
   const { statusData } = useStatusPageData()
 
   return (
-    <header className="border-b bg-background">
-      <div className="mx-auto max-w-5xl px-4 py-4 md:py-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+    <header className="bg-background">
+      <div className="mx-auto max-w-5xl px-4 py-8 md:py-12 flex items-center justify-between">
+        <div className="flex items-center gap-3">
           {statusData.logo_url ? (
-            <img 
+            <Image 
               src={statusData.logo_url} 
               alt="Logo" 
-              className="size-6 rounded-md object-contain"
+              width={32}
+              height={32}
+              className="size-8 rounded-md object-contain"
             />
           ) : (
-            <span className="inline-block size-6 rounded-md bg-foreground/90" aria-hidden />
+            <div className="size-8 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">
+                {statusData.name ? statusData.name.charAt(0).toUpperCase() : "S"}
+              </span>
+            </div>
           )}
-          <span className="font-semibold">
-            {statusData.name ? `${statusData.name} Status` : "Status Page"}
-          </span>
+          <div>
+            <h1 className="text-xl md:text-2xl font-semibold">
+              {statusData.name || "Status Page"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              System status and performance
+            </p>
+          </div>
         </div>
-        <nav aria-label="Status navigation">
-          <ul className="hidden md:flex items-center gap-4 text-sm text-muted-foreground">
-            <li className="hover:text-foreground transition-colors">
-              <a href="#active-incidents">Incidents</a>
-            </li>
-            <li className="hover:text-foreground transition-colors">
-              <a href="#components">Components</a>
-            </li>
-            <li className="hover:text-foreground transition-colors">
-              <a href="#resolved">Resolved</a>
-            </li>
-            {statusData.support_url && (
-              <li className="hover:text-foreground transition-colors">
-                <a href={statusData.support_url} target="_blank" rel="noopener noreferrer">
-                  Support
-                </a>
-              </li>
-            )}
-          </ul>
-        </nav>
+        <div className="hidden md:flex items-center gap-2">
+          <button 
+            onClick={() => {
+              // TODO: Implement subscription modal/functionality
+              alert('Subscription feature coming soon!')
+            }}
+            className="px-4 py-2 text-sm bg-muted hover:bg-muted/80 rounded-md transition-colors"
+          >
+            Subscribe to updates
+          </button>
+        </div>
       </div>
     </header>
   )

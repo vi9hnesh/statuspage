@@ -6,6 +6,7 @@ import { IncidentFeedWrapper } from "@/components/status/incident-feed-wrapper"
 import { StatusPageHeader } from "@/components/status/status-page-header"
 import { StatusPageProvider } from "@/components/status/status-page-provider"
 import { notFound } from "next/navigation"
+import Image from "next/image"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 60 // Revalidate every 60 seconds
@@ -27,17 +28,17 @@ export default async function StatusPage({ params }: StatusPageProps) {
     
     return (
       <StatusPageProvider statusData={statusData} incidentsData={incidentsData}>
-        <main className="min-h-dvh">
+        <main className="min-h-dvh bg-gray-50/50">
           {/* Header */}
           <StatusPageHeader slug={slug} />
 
           {/* Overall status banner */}
-          <section aria-labelledby="overall-status">
+          <section aria-labelledby="overall-status" className="py-6 md:py-8">
             <StatusBanner slug={slug} />
           </section>
 
           {/* Content */}
-          <section className="mx-auto max-w-5xl px-4 pb-16 pt-6 md:pt-10 space-y-8">
+          <section className="mx-auto max-w-5xl px-4 pb-16 space-y-8">
             {/* 1) Active incidents first */}
             <div id="active-incidents" className="scroll-mt-20">
               <IncidentFeedWrapper mode="active" slug={slug} />
@@ -54,9 +55,20 @@ export default async function StatusPage({ params }: StatusPageProps) {
             </div>
           </section>
 
-          <footer className="border-t">
-            <div className="mx-auto max-w-5xl px-4 py-8 text-sm text-muted-foreground">
-              <p className="text-center">Powered by Next.js on Vercel · This page auto-refreshes periodically.</p>
+          <footer className="">
+            <div className="mx-auto max-w-5xl px-4 py-8">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <span>Powered by</span>
+                  <Image 
+                    src="/logo/light.svg" 
+                    alt="Warrn" 
+                    width={60}
+                    height={20}
+                    className="h-5 opacity-60"
+                  />
+                </div>
+              </div>
             </div>
           </footer>
         </main>

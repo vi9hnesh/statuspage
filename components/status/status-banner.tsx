@@ -30,21 +30,35 @@ export function StatusBanner({ slug }: StatusBannerProps) {
   const severity = statusData.severity
 
   return (
-    <div className={`border-b ${bannerStyles(severity)}`}>
-      <div className="mx-auto max-w-5xl px-4 py-5 md:py-7">
-        <div className="flex flex-col items-start gap-2 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-2">
+    <div className="mx-auto max-w-5xl px-4">
+      <div className={`rounded-lg border p-6 md:p-6 ${bannerStyles(severity)}`}>
+        <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
             <BannerIcon severity={severity} />
-            <h1 id="overall-status" className="text-pretty text-base md:text-lg font-medium">
-              {statusData.summary}
-            </h1>
+            <div>
+              <h2 id="overall-status" className="text-lg md:text-xl font-semibold">
+                {statusData.summary}
+              </h2>
+              <p className="text-sm opacity-70 mt-1">
+                We&apos;re not aware of any issues affecting our systems.
+              </p>
+            </div>
           </div>
-          <p className="text-xs md:text-sm opacity-70">
-            Last updated {new Date(statusData.lastUpdated).toUTCString()}
-          </p>
+          <div className="text-right">
+            <p className="text-xs md:text-sm opacity-70">
+              Last updated
+            </p>
+            <p className="text-xs md:text-sm font-medium">
+              {new Date(statusData.lastUpdated).toLocaleString()}
+            </p>
+          </div>
         </div>
         {!statusData.allOperational && statusData.affectedComponentIds.length > 0 && (
-          <p className="mt-2 text-sm">Affected: {statusData.affectedComponentIds.join(", ")}</p>
+          <div className="mt-4 pt-4 border-t border-current/20">
+            <p className="text-sm">
+              <span className="font-medium">Affected services:</span> {statusData.affectedComponentIds.join(", ")}
+            </p>
+          </div>
         )}
       </div>
     </div>
