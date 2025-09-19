@@ -13,41 +13,42 @@ export function StatusPageHeader({ slug }: StatusPageHeaderProps) {
 
   return (
     <header className="bg-background">
-      <div className="mx-auto max-w-5xl px-4 py-8 md:py-12 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="mx-auto max-w-5xl px-4 py-6 md:py-12 flex items-center justify-between">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
           {statusData.logo_url ? (
             <Image 
               src={statusData.logo_url} 
               alt="Logo" 
               width={32}
               height={32}
-              className="size-8 rounded-md object-contain"
+              className="size-6 md:size-8 rounded-md object-contain flex-shrink-0"
             />
           ) : (
-            <div className="size-8 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">
+            <div className="size-6 md:size-8 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-xs md:text-sm">
                 {statusData.name ? statusData.name.charAt(0).toUpperCase() : "S"}
               </span>
             </div>
           )}
-          <div>
-            <h1 className="text-xl md:text-2xl font-semibold">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg md:text-2xl font-semibold truncate">
               {statusData.name || "Status Page"}
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
               System status and performance
             </p>
           </div>
         </div>
-        <div className="hidden md:flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button 
             onClick={() => {
               // TODO: Implement subscription modal/functionality
               alert('Subscription feature coming soon!')
             }}
-            className="px-4 py-2 text-sm bg-muted hover:bg-muted/80 rounded-md transition-colors"
+            className="px-3 py-2 text-xs md:text-sm bg-muted hover:bg-muted/80 rounded-md transition-colors"
           >
-            Subscribe to updates
+            <span className="hidden sm:inline">Subscribe to updates</span>
+            <span className="sm:hidden">Subscribe</span>
           </button>
         </div>
       </div>

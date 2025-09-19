@@ -5,14 +5,56 @@ import { ComponentsListEnhanced } from "@/components/status/components-list-enha
 import { IncidentFeedWrapper } from "@/components/status/incident-feed-wrapper"
 import { StatusPageHeader } from "@/components/status/status-page-header"
 import { StatusPageProvider } from "@/components/status/status-page-provider"
-import { notFound } from "next/navigation"
+import { redirect } from "next/navigation"
 import Image from "next/image"
-
+import Link from "next/link"
 export const dynamic = "force-dynamic"
 export const revalidate = 60 // Revalidate every 60 seconds
 
 interface StatusPageProps {
   params: Promise<{ slug: string }>
+}
+
+// Generate dynamic metadata based on the status page
+export async function generateMetadata({ params }: StatusPageProps) {
+  const { slug } = await params
+  
+  try {
+    // Fetch status page data for metadata
+    const backendData = await statusPageFetcher<BackendStatusPageResponse>(slug)
+    const statusPageName = backendData.name || slug
+    
+    return {
+      title: `${statusPageName} Status`,
+      description: `Real-time status and performance monitoring for ${statusPageName}. Check system uptime, incidents, and service availability.`,
+      openGraph: {
+        title: `${statusPageName} Status`,
+        description: `Monitor ${statusPageName} system status and performance in real-time`,
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary',
+        title: `${statusPageName} Status`,
+        description: `Monitor ${statusPageName} system status and performance in real-time`,
+      },
+    }
+  } catch (error) {
+    // Fallback metadata if status page fetch fails
+    return {
+      title: `${slug} Status`,
+      description: `Status page for ${slug}. Monitor system uptime and performance.`,
+      openGraph: {
+        title: `${slug} Status`,
+        description: `Status page for ${slug}`,
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary',
+        title: `${slug} Status`,
+        description: `Status page for ${slug}`,
+      },
+    }
+  }
 }
 
 export default async function StatusPage({ params }: StatusPageProps) {
@@ -60,13 +102,20 @@ export default async function StatusPage({ params }: StatusPageProps) {
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                   <span>Powered by</span>
-                  <Image 
-                    src="/logo/light.svg" 
-                    alt="Warrn" 
-                    width={60}
-                    height={20}
-                    className="h-5 opacity-60"
-                  />
+                  <Link
+                    href="https://warrn.io/status-pages"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
+                  >
+                    <Image 
+                      src="/logo/light.svg" 
+                      alt="Warrn" 
+                      width={60}
+                      height={20}
+                      className="h-5 opacity-60"
+                    />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -76,7 +125,11 @@ export default async function StatusPage({ params }: StatusPageProps) {
     )
   } catch (error) {
     console.error(`Error fetching status page for slug ${slug}:`, error)
-    // Return 404 if status page not found
-    notFound()
+    // Only redirect if it's a 404 error (status page not found)
+    if (error instanceof Error && error.message.includes('404')) {
+      redirect('https://warrn.io/status-pages')
+    }
+    // For other errors, let them bubble up or provide a fallback
+    throw error
   }
 }

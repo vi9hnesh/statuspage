@@ -31,21 +31,21 @@ export function StatusBanner({ slug }: StatusBannerProps) {
 
   return (
     <div className="mx-auto max-w-5xl px-4">
-      <div className={`rounded-lg border p-6 md:p-6 ${bannerStyles(severity)}`}>
-        <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
+      <div className={`rounded-lg border p-4 md:p-6 ${bannerStyles(severity)}`}>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-3">
             <BannerIcon severity={severity} />
-            <div>
-              <h2 id="overall-status" className="text-lg md:text-xl font-semibold">
+            <div className="min-w-0 flex-1">
+              <h2 id="overall-status" className="text-base md:text-xl font-semibold">
                 {statusData.summary}
               </h2>
-              <p className="text-sm opacity-70 mt-1">
+              <p className="text-xs md:text-sm opacity-70 mt-1">
                 We&apos;re not aware of any issues affecting our systems.
               </p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs md:text-sm opacity-70">
+          <div className="text-left md:text-right ml-8 md:ml-0">
+            <p className="text-xs opacity-70">
               Last updated
             </p>
             <p className="text-xs md:text-sm font-medium">
@@ -55,7 +55,7 @@ export function StatusBanner({ slug }: StatusBannerProps) {
         </div>
         {!statusData.allOperational && statusData.affectedComponentIds.length > 0 && (
           <div className="mt-4 pt-4 border-t border-current/20">
-            <p className="text-sm">
+            <p className="text-xs md:text-sm">
               <span className="font-medium">Affected services:</span> {statusData.affectedComponentIds.join(", ")}
             </p>
           </div>

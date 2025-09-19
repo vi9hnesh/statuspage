@@ -5,9 +5,29 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: {
+    template: '%s',
+    default: 'Status Pages',
+  },
+  description: 'Real-time status monitoring and system performance tracking. Stay informed about service availability and incidents.',
+  generator: 'Warrn Status Pages',
+  keywords: ['status page', 'uptime monitoring', 'system status', 'service health'],
+  authors: [{ name: 'Warrn', url: 'https://warrn.io' }],
+  creator: 'Warrn',
+  publisher: 'Warrn',
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'Warrn Status Pages',
+  },
+  twitter: {
+    card: 'summary',
+    creator: '@warrn',
+  },
 }
 
 export default function RootLayout({
