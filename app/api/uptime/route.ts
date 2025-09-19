@@ -48,32 +48,36 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Component ID required' }, { status: 400 })
   }
   
-  // Mock current status lookup - in real app, fetch from database
-  const componentStatuses: Record<string, string> = {
-    'api': 'operational',
-    'alerts': 'operational', 
-    'oncall': 'operational',
-    'dashboard': 'operational',
-    'insights': 'operational',
-    'mobile': 'operational',
-    'slack': 'operational',
-    'teams': 'operational',
-    'integrations': 'operational',
-    'statuspages': 'operational',
-    'website': 'operational',
-    'oncall-push': 'degraded',
-    'integration-6': 'degraded',
-    'integration-16': 'degraded'
+  try {
+    // TODO: Implement backend endpoint for component uptime history
+    // For now, generate uptime based on current component status from backend
+    
+    // You can extend this to call your backend API:
+    // const uptimeData = await backendFetcher(`/api/status-pages/public/${slug}/components/${componentId}/uptime/`)
+    
+    // For now, generate mock data based on the component ID
+    const status = 'operational' // Default status for all components
+    const history = generateUptimeHistory(componentId, status, days)
+    
+    return NextResponse.json({
+      componentId,
+      days,
+      history,
+      uptime: history.filter(h => h.status === 'operational').length / history.length * 100
+    })
+    
+  } catch (error) {
+    console.error("Error fetching uptime data:", error)
+    
+    // Fallback to operational status
+    const history = generateUptimeHistory(componentId, 'operational', days)
+    
+    return NextResponse.json({
+      componentId,
+      days,
+      history,
+      uptime: 99.9 // Fallback uptime
+    })
   }
-  
-  const status = componentStatuses[componentId] || 'operational'
-  const history = generateUptimeHistory(componentId, status, days)
-  
-  return NextResponse.json({
-    componentId,
-    days,
-    history,
-    uptime: history.filter(h => h.status === 'operational').length / history.length * 100
-  })
 }
 

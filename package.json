@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "test:integration": "node test-integration.js",
+    "dev:with-backend": "API_BASE_URL=http://localhost:8000 STATUS_PAGE_SLUG=api-9 next dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

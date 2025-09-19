@@ -246,8 +246,14 @@ function ComponentRow({
   )
 }
 
-export function ComponentsListEnhanced() {
-  const { data } = useSWR<StatusSummary>("/api/status", jsonFetcher, { refreshInterval: 60_000 })
+import { useStatusPageData } from "./status-page-provider"
+
+interface ComponentsListEnhancedProps {
+  slug: string
+}
+
+export function ComponentsListEnhanced({ slug }: ComponentsListEnhancedProps) {
+  const { statusData } = useStatusPageData()
   const { data: periodsData } = useSWR("/api/time-periods", jsonFetcher, { refreshInterval: 300_000 })
   const [expandedComponents, setExpandedComponents] = useState<Set<string>>(new Set())
   const [currentPeriodIndex, setCurrentPeriodIndex] = useState(0)
@@ -266,7 +272,7 @@ export function ComponentsListEnhanced() {
   }
 
   // Use API data directly - it now includes subComponents
-  const enhancedComponents = (data?.components ?? []).map((component) => ({
+  const enhancedComponents = (statusData.components ?? []).map((component) => ({
     ...component,
     subComponents: component.subComponents || [],
     isExpanded: expandedComponents.has(component.id)

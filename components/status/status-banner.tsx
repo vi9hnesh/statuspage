@@ -1,7 +1,6 @@
 "use client"
 
-import useSWR from "swr"
-import { jsonFetcher } from "@/lib/fetcher"
+import { useStatusPageData } from "./status-page-provider"
 import type { StatusSummary } from "./types"
 import { CheckCircle2, AlertTriangle, OctagonAlert } from "lucide-react"
 
@@ -22,9 +21,13 @@ function BannerIcon({ severity }: { severity: StatusSummary["severity"] }) {
   return <AlertTriangle className="size-5 text-amber-600" aria-hidden />
 }
 
-export function StatusBanner() {
-  const { data } = useSWR<StatusSummary>("/api/status", jsonFetcher, { refreshInterval: 60_000 })
-  const severity = data?.severity ?? "none"
+interface StatusBannerProps {
+  slug: string
+}
+
+export function StatusBanner({ slug }: StatusBannerProps) {
+  const { statusData } = useStatusPageData()
+  const severity = statusData.severity
 
   return (
     <div className={`border-b ${bannerStyles(severity)}`}>
@@ -33,15 +36,15 @@ export function StatusBanner() {
           <div className="flex items-center gap-2">
             <BannerIcon severity={severity} />
             <h1 id="overall-status" className="text-pretty text-base md:text-lg font-medium">
-              {data?.summary ?? "All systems operational"}
+              {statusData.summary}
             </h1>
           </div>
           <p className="text-xs md:text-sm opacity-70">
-            Last updated {data ? new Date(data.lastUpdated).toUTCString() : "just now"}
+            Last updated {new Date(statusData.lastUpdated).toUTCString()}
           </p>
         </div>
-        {data && !data.allOperational && data.affectedComponentIds.length > 0 && (
-          <p className="mt-2 text-sm">Affected: {data.affectedComponentIds.join(", ")}</p>
+        {!statusData.allOperational && statusData.affectedComponentIds.length > 0 && (
+          <p className="mt-2 text-sm">Affected: {statusData.affectedComponentIds.join(", ")}</p>
         )}
       </div>
     </div>

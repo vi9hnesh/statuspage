@@ -87,10 +87,10 @@ export function IncidentFeed({
                   <AccordionContent>
                     <div className="rounded-md border p-3">
                       <p className="mb-2 text-xs text-muted-foreground">
-                        Affected: {i.affectedComponents.length > 0 ? i.affectedComponents.join(", ") : "—"}
+                        Affected: {i.affectedComponents?.length > 0 ? i.affectedComponents.join(", ") : "—"}
                       </p>
                       <ul className="space-y-2">
-                        {i.updates.map((u, idx) => (
+                        {i.updates?.map((u, idx) => (
                           <li key={idx} className="text-sm">
                             <span className="mr-2 text-xs opacity-70">{formatISO(u.at)} UTC</span>
                             {u.text}

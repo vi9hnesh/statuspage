@@ -1,9 +1,6 @@
-import StatusPageClient from "@/components/status-page-client"
+import { redirect } from 'next/navigation'
 
 export default function Page() {
-  return (
-    <main className="min-h-dvh">
-      <StatusPageClient />
-    </main>
-  )
+  // Redirect home page to status pages listing
+  redirect('https://warrn.io/status-pages')
 }
