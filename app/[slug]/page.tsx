@@ -75,7 +75,7 @@ export default async function StatusPage({ params }: StatusPageProps) {
           <StatusPageHeader slug={slug} />
 
           {/* Overall status banner */}
-          <section aria-labelledby="overall-status" className="py-6 md:py-8">
+          <section aria-labelledby="overall-status" className="py-1">
             <StatusBanner slug={slug} />
           </section>
 

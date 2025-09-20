@@ -34,9 +34,6 @@ export function StatusPageHeader({ slug }: StatusPageHeaderProps) {
             <h1 className="text-lg md:text-2xl font-semibold truncate">
               {statusData.name || "Status Page"}
             </h1>
-            <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
-              System status and performance
-            </p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
