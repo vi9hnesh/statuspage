@@ -15,9 +15,11 @@ import {
   Webhook, 
   ChevronLeft, 
   ChevronRight,
-  Info
+  Info,
+  CircleMinus
 } from "lucide-react"
 import { useState } from "react"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 
 function StatusIcon({ status, className = "w-4 h-4" }: { status: StatusComponent["status"], className?: string }) {
   switch (status) {
@@ -27,22 +29,32 @@ function StatusIcon({ status, className = "w-4 h-4" }: { status: StatusComponent
           <path d="M8 0C3.589 0 0 3.589 0 8C0 12.411 3.589 16 8 16C12.411 16 16 12.411 16 8C16 3.589 12.411 0 8 0ZM11.947 5.641C10.088 7.023 8.512 8.931 7.264 11.31C7.135 11.557 6.879 11.712 6.6 11.712C6.323 11.715 6.062 11.555 5.933 11.305C5.358 10.188 4.715 9.28 3.968 8.529C3.676 8.236 3.677 7.76 3.971 7.468C4.263 7.176 4.739 7.176 5.032 7.471C5.605 8.047 6.122 8.699 6.595 9.443C7.834 7.398 9.329 5.717 11.053 4.436C11.385 4.19 11.855 4.258 12.102 4.591C12.349 4.923 12.28 5.394 11.947 5.641Z" fill="currentColor"/>
         </svg>
       )
-    case "degraded":
+    case "degraded_performance":
       return (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${className} text-amber-500`}>
-          <path d="M8 0L0 14h16L8 0zm0 3l5.5 9h-11L8 3zm0 2.5L5 11h6L8 5.5z" fill="currentColor"/>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${className} text-amber-400`}>
+          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" fill="currentColor"/>
         </svg>
+      )
+    case "partial_outage":
+      return (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${className} text-orange-500`}>
+          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" fill="currentColor"/>
+        </svg>
+      )
+    case "major_outage":
+      return (
+        <CircleMinus className={`${className} text-red-500`} />
       )
     case "maintenance":
       return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${className} text-blue-500`}>
-          <path d="M8 0L0 14h16L8 0zm0 3l5.5 9h-11L8 3zm0 2.5L5 11h6L8 5.5z" fill="currentColor"/>
+          <path d="M8 0C3.589 0 0 3.589 0 8C0 12.411 3.589 16 8 16C12.411 16 16 12.411 16 8C16 3.589 12.411 0 8 0ZM11 9H5V7h6v2z" fill="currentColor"/>
         </svg>
       )
     default:
       return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={`${className} text-red-500`}>
-          <path d="M8 0C3.589 0 0 3.589 0 8C0 12.411 3.589 16 8 16C12.411 16 16 12.411 16 8C16 3.589 12.411 0 8 0ZM11 9H5V7h6v2z" fill="currentColor"/>
+          <path d="M8 0C3.589 0 0 3.589 0 8C0 12.411 3.589 16 8 16C12.411 16 16 12.411 16 8C16 3.589 12.411 0 8 0ZM11.707 10.293c.391.391.391 1.023 0 1.414-.195.195-.451.293-.707.293s-.512-.098-.707-.293L8 9.414l-2.293 2.293c-.195.195-.451.293-.707.293s-.512-.098-.707-.293c-.391-.391-.391-1.023 0-1.414L6.586 8 4.293 5.707c-.391-.391-.391-1.023 0-1.414s1.023-.391 1.414 0L8 6.586l2.293-2.293c.391-.391 1.023-.391 1.414 0s.391 1.023 0 1.414L9.414 8l2.293 2.293z" fill="currentColor"/>
         </svg>
       )
   }
@@ -106,12 +118,17 @@ function BatteryChart({
                 case "operational":
                   fillClass = "fill-emerald-500"
                   break
-                case "degraded":
-                case "maintenance":
+                case "degraded_performance":
                   fillClass = "fill-amber-400"
                   break
-                case "outage":
+                case "partial_outage":
+                  fillClass = "fill-orange-500"
+                  break
+                case "major_outage":
                   fillClass = "fill-red-500"
+                  break
+                case "maintenance":
+                  fillClass = "fill-blue-500"
                   break
                 default:
                   fillClass = "fill-slate-200 dark:fill-slate-700"
@@ -121,20 +138,26 @@ function BatteryChart({
               const upCount = Math.round((Math.max(0, Math.min(100, value)) / 100) * cells)
               const incidentBase = Math.max(1, Math.round(cells - upCount || (status === "operational" ? 0 : cells * 0.02)))
               const incidentCount =
-                status === "outage"
+                status === "major_outage"
                   ? Math.max(incidentBase, 3)
-                  : status === "degraded" || status === "maintenance"
+                  : status === "partial_outage"
                     ? Math.max(incidentBase, 2)
-                    : 0
+                    : status === "degraded_performance" || status === "maintenance"
+                      ? Math.max(incidentBase, 1)
+                      : 0
               const incidentIdx = incidentCount > 0 ? seededIndices(id, cells, incidentCount) : []
               
               if (i < upCount && !incidentIdx.includes(i)) {
                 fillClass = "fill-emerald-500" // Operational
               } else if (incidentIdx.includes(i)) {
-                if (status === "outage") {
-                  fillClass = "fill-red-500" // Outage
-                } else if (status === "degraded" || status === "maintenance") {
-                  fillClass = "fill-amber-400" // Degraded/Maintenance
+                if (status === "major_outage") {
+                  fillClass = "fill-red-500" // Major outage
+                } else if (status === "partial_outage") {
+                  fillClass = "fill-orange-500" // Partial outage
+                } else if (status === "degraded_performance") {
+                  fillClass = "fill-amber-400" // Degraded performance
+                } else if (status === "maintenance") {
+                  fillClass = "fill-blue-500" // Maintenance
                 } else {
                   fillClass = "fill-emerald-500" // Default operational
                 }
@@ -185,9 +208,21 @@ function ComponentRow({
             <div className="hidden md:flex space-x-2 flex-grow items-center">
               <div className="flex space-x-1.5 items-center">
                 <h3 className="font-medium text-slate-900 dark:text-slate-100">{component.name}</h3>
-                <div className="transition text-slate-300 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-300 mt-[1px] hidden md:block">
-                  <Info className="w-4 h-4" />
-                </div>
+                {component.description && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="transition text-slate-300 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-300 mt-[1px] hidden md:block">
+                          <Info className="w-4 h-4" />
+                          <span className="sr-only">Component description</span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-sm">
+                        <p>{component.description}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
               {subComponents && subComponents.length > 0 && (
                 <button 
@@ -213,6 +248,21 @@ function ComponentRow({
             </div>
             <div className="flex md:hidden items-center min-w-[0px]">
               <h3 className="font-medium">{component.name}</h3>
+              {component.description && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button className="transition text-slate-300 hover:text-slate-500 dark:text-slate-500 dark:hover:text-slate-300 ml-1">
+                        <Info className="w-4 h-4" />
+                        <span className="sr-only">Component description</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-sm">
+                      <p>{component.description}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               {subComponents && subComponents.length > 0 && (
                 <button 
                   onClick={onToggle}
