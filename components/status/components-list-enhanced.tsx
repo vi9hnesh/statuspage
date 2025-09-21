@@ -90,10 +90,10 @@ function BatteryChart({
   cells?: number
 }) {
   // Fetch historical uptime data for this component
-  const { data: uptimeData } = useSWR(
+  const { data: uptimeData } = useSWR<UptimeData>(
     `/api/uptime?component=${id}&days=${cells}`,
     jsonFetcher,
-    { 
+    {
       refreshInterval: 300_000, // Refresh every 5 minutes
       revalidateOnFocus: false
     }
@@ -298,16 +298,40 @@ function ComponentRow({
 
 import { useStatusPageData } from "./status-page-provider"
 
+interface UptimeData {
+  componentId: string
+  days: number
+  history: Array<{ date: string; status: string }>
+  uptime: number
+}
+
+interface TimePeriodsData {
+  periods: Array<{
+    id: string
+    label: string
+    startDate: string
+    endDate: string
+    isCurrent: boolean
+  }>
+  current: {
+    id: string
+    label: string
+    startDate: string
+    endDate: string
+    isCurrent: boolean
+  }
+}
+
 interface ComponentsListEnhancedProps {
   slug: string
 }
 
 export function ComponentsListEnhanced({ slug }: ComponentsListEnhancedProps) {
   const { statusData } = useStatusPageData()
-  const { data: periodsData } = useSWR("/api/time-periods", jsonFetcher, { refreshInterval: 300_000 })
+  const { data: periodsData } = useSWR<TimePeriodsData>("/api/time-periods", jsonFetcher, { refreshInterval: 300_000 })
   const [expandedComponents, setExpandedComponents] = useState<Set<string>>(new Set())
   const [currentPeriodIndex, setCurrentPeriodIndex] = useState(0)
-  
+
   const periods = periodsData?.periods || []
   const currentPeriod = periods[currentPeriodIndex] || { label: "Jun 2025 - Aug 2025" }
 

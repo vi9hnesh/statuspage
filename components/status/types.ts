@@ -104,7 +104,7 @@ export function transformBackendResponse(data: BackendStatusPageResponse): Statu
     ? "All systems operational."
     : data.overall_status === "degraded_performance"
       ? "Some components are experiencing issues."
-      : "A subset of services are unavailable."
+      : "We are experiencing some issues."
 
   const affectedComponentIds = data.active_incidents.flatMap(incident => 
     incident.affected_components

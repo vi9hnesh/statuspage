@@ -70,7 +70,7 @@ export default async function StatusPage({ params }: StatusPageProps) {
     
     return (
       <StatusPageProvider statusData={statusData} incidentsData={incidentsData}>
-        <main className="min-h-dvh bg-gray-50/50">
+        <main className="min-h-dvh">
           {/* Header */}
           <StatusPageHeader slug={slug} />
 
@@ -80,7 +80,7 @@ export default async function StatusPage({ params }: StatusPageProps) {
           </section>
 
           {/* Content */}
-          <section className="mx-auto max-w-5xl px-4 pb-16 space-y-8">
+          <section className="mx-auto max-w-5xl px-4 pb-16 space-y-8 mt-4">
             {/* 1) Active incidents first */}
             <div id="active-incidents" className="scroll-mt-20">
               <IncidentFeedWrapper mode="active" slug={slug} />
