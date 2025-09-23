@@ -5,8 +5,8 @@ import { ComponentsListEnhanced } from "@/components/status/components-list-enha
 import { IncidentFeedWrapper } from "@/components/status/incident-feed-wrapper"
 import { StatusPageHeader } from "@/components/status/status-page-header"
 import { StatusPageProvider } from "@/components/status/status-page-provider"
-import { StatusPageClient } from "@/components/status/status-page-client"
 import { redirect } from "next/navigation"
+import { auth } from "@clerk/nextjs/server"
 import Image from "next/image"
 import Link from "next/link"
 export const dynamic = "force-dynamic"
@@ -69,13 +69,20 @@ export default async function StatusPage({ params }: StatusPageProps) {
       redirect('https://warrn.io/status-pages')
     }
     
-    // For private pages, use client-side rendering with auth
+    // Get auth token if required (server-side)
+    let authToken: string | null = null
     if (authCheck.requires_auth) {
-      return <StatusPageClient slug={slug} />
+      const { getToken } = await auth()
+      authToken = await getToken()
+      
+      if (!authToken) {
+        // Redirect to sign-in with return URL
+        redirect(`/sign-in?return_url=${encodeURIComponent(`/${slug}`)}`)
+      }
     }
     
-    // For public pages, use server-side rendering (faster)
-    const backendData = await statusPageFetcher<BackendStatusPageResponse>(slug)
+    // Fetch data server-side (either with or without auth token)
+    const backendData = await statusPageFetcher<BackendStatusPageResponse>(slug, "", authToken || undefined)
     const statusData = transformBackendResponse(backendData)
     const incidentsData = transformBackendIncidents(backendData)
     
@@ -135,9 +142,15 @@ export default async function StatusPage({ params }: StatusPageProps) {
       </StatusPageProvider>
     )
   } catch (error) {
-    // Only redirect if it's a 404 error (status page not found)
-    if (error instanceof Error && error.message.includes('404')) {
-      redirect('https://warrn.io/status-pages')
+    // Handle authentication errors by redirecting to sign-in
+    if (error instanceof Error) {
+      if (error.message.includes('Authentication required')) {
+        // Redirect to sign-in with return URL
+        redirect(`/sign-in?return_url=${encodeURIComponent(`/${slug}`)}`)
+      }
+      if (error.message.includes('404') || error.message.includes('Status page not found')) {
+        redirect('https://warrn.io/status-pages')
+      }
     }
     // For other errors, let them bubble up or provide a fallback
     throw error
