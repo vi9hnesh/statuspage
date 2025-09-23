@@ -123,3 +123,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.clerk-reset-border-shadow {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+.cl-internal-1dauvpw{
+  display: none !important;
+}

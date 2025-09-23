@@ -1,10 +1,11 @@
-import { statusPageFetcher } from "@/lib/fetcher"
+import { statusPageFetcher, checkStatusPageAuthRequirement } from "@/lib/fetcher"
 import { transformBackendResponse, transformBackendIncidents, type BackendStatusPageResponse } from "@/components/status/types"
 import { StatusBanner } from "@/components/status/status-banner"
 import { ComponentsListEnhanced } from "@/components/status/components-list-enhanced"  
 import { IncidentFeedWrapper } from "@/components/status/incident-feed-wrapper"
 import { StatusPageHeader } from "@/components/status/status-page-header"
 import { StatusPageProvider } from "@/components/status/status-page-provider"
+import { StatusPageClient } from "@/components/status/status-page-client"
 import { redirect } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -20,9 +21,9 @@ export async function generateMetadata({ params }: StatusPageProps) {
   const { slug } = await params
   
   try {
-    // Fetch status page data for metadata
-    const backendData = await statusPageFetcher<BackendStatusPageResponse>(slug)
-    const statusPageName = backendData.name || slug
+    // Check if status page exists and get basic info for metadata
+    const authCheck = await checkStatusPageAuthRequirement(slug)
+    const statusPageName = authCheck.name || slug
     
     return {
       title: `${statusPageName} Status`,
@@ -61,10 +62,20 @@ export default async function StatusPage({ params }: StatusPageProps) {
   const { slug } = await params
   
   try {
-    // Fetch all data server-side
-    const backendData = await statusPageFetcher<BackendStatusPageResponse>(slug)
+    // Check if authentication is required
+    const authCheck = await checkStatusPageAuthRequirement(slug)
     
-    // Transform data for frontend
+    if (!authCheck.exists) {
+      redirect('https://warrn.io/status-pages')
+    }
+    
+    // For private pages, use client-side rendering with auth
+    if (authCheck.requires_auth) {
+      return <StatusPageClient slug={slug} />
+    }
+    
+    // For public pages, use server-side rendering (faster)
+    const backendData = await statusPageFetcher<BackendStatusPageResponse>(slug)
     const statusData = transformBackendResponse(backendData)
     const incidentsData = transformBackendIncidents(backendData)
     
@@ -124,7 +135,6 @@ export default async function StatusPage({ params }: StatusPageProps) {
       </StatusPageProvider>
     )
   } catch (error) {
-    console.error(`Error fetching status page for slug ${slug}:`, error)
     // Only redirect if it's a 404 error (status page not found)
     if (error instanceof Error && error.message.includes('404')) {
       redirect('https://warrn.io/status-pages')

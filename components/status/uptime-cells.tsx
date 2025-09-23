@@ -12,10 +12,11 @@ const colorFor = (s: ComponentStatus) => {
   switch (s) {
     case "operational":
       return "bg-emerald-500"
-    case "degraded":
+    case "degraded_performance":
     case "maintenance":
       return "bg-amber-500"
-    case "outage":
+    case "partial_outage":
+    case "major_outage":
       return "bg-red-500"
     default:
       return "bg-zinc-300"
@@ -37,10 +38,11 @@ export function generateFallbackHistory(id: string, fallbackStatus: ComponentSta
   const seed = hash(id)
   // sprinkle a few amber/red cells depending on status
   const blips =
-    fallbackStatus === "outage" ? 6 : fallbackStatus === "degraded" || fallbackStatus === "maintenance" ? 4 : 2
+    fallbackStatus === "major_outage" || fallbackStatus === "partial_outage" ? 6 : 
+    fallbackStatus === "degraded_performance" || fallbackStatus === "maintenance" ? 4 : 2
   for (let i = 0; i < blips; i++) {
     const idx = (seed + i * 13) % n
-    arr[idx] = fallbackStatus === "outage" ? "outage" : "degraded"
+    arr[idx] = fallbackStatus === "major_outage" || fallbackStatus === "partial_outage" ? "partial_outage" : "degraded_performance"
   }
   return arr
 }
