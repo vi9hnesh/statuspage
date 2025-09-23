@@ -27,7 +27,7 @@ export default function Error({
             variant="outline" 
             onClick={() => window.location.href = 'https://warrn.io/status-pages'}
           >
-            View all status pages
+            Status Pages
           </Button>
         </div>
       </div>

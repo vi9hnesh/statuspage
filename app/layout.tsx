@@ -44,7 +44,7 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+        <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
           {children}
           <Analytics />
         </body>

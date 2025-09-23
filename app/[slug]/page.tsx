@@ -5,6 +5,7 @@ import { ComponentsListEnhanced } from "@/components/status/components-list-enha
 import { IncidentFeedWrapper } from "@/components/status/incident-feed-wrapper"
 import { StatusPageHeader } from "@/components/status/status-page-header"
 import { StatusPageProvider } from "@/components/status/status-page-provider"
+import { AccessDenied } from "@/components/ui/access-denied"
 import { redirect } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import Image from "next/image"
@@ -142,16 +143,25 @@ export default async function StatusPage({ params }: StatusPageProps) {
       </StatusPageProvider>
     )
   } catch (error) {
-    // Handle authentication errors by redirecting to sign-in
+    // Handle different error types gracefully
     if (error instanceof Error) {
+      // 403 Forbidden - user is authenticated but not authorized for this org's status page
+      if (error.message.includes('403') || error.message.includes('Forbidden')) {
+        const authCheck = await checkStatusPageAuthRequirement(slug).catch(() => ({ exists: false, name: null }))
+        return <AccessDenied statusPageName={authCheck.name || slug} />
+      }
+      
+      // 401 Authentication required - redirect to sign-in
       if (error.message.includes('Authentication required')) {
-        // Redirect to sign-in with return URL
         redirect(`/sign-in?return_url=${encodeURIComponent(`/${slug}`)}`)
       }
+      
+      // 404 Status page not found - redirect to main site
       if (error.message.includes('404') || error.message.includes('Status page not found')) {
         redirect('https://warrn.io/status-pages')
       }
     }
+    
     // For other errors, let them bubble up or provide a fallback
     throw error
   }

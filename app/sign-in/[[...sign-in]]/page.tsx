@@ -2,10 +2,21 @@ import { SignIn } from '@clerk/nextjs'
 
 export default function Page() {
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-gray-50/50">
-      <div className="w-full max-w-md p-6">
+    <div className="min-h-dvh flex items-center justify-center bg-gray-50/50 relative overflow-hidden">
+      {/* Cross grid pattern background */}
+      <div className="absolute inset-0 opacity-15">
+        <div className="h-full w-full" style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(156, 163, 175, 0.2) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(156, 163, 175, 0.2) 1px, transparent 1px)
+          `,
+          backgroundSize: '24px 24px'
+        }}>
+        </div>
+      </div>
+      
+      <div className="w-full max-w-md p-6 relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">Sign In</h1>
           <p className="text-muted-foreground">
             Access your private status page
           </p>
