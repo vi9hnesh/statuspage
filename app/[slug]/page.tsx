@@ -8,6 +8,7 @@ import { StatusPageProvider } from "@/components/status/status-page-provider"
 import { AccessDenied } from "@/components/ui/access-denied"
 import { redirect } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
+import { headers } from "next/headers"
 import Image from "next/image"
 import Link from "next/link"
 export const dynamic = "force-dynamic"
@@ -76,8 +77,9 @@ export default async function StatusPage({ params }: StatusPageProps) {
       const { getToken } = await auth()
       authToken = await getToken()
       
+      
       if (!authToken) {
-        // Redirect to sign-in with return URL
+        // Redirect to sign-in with return URL (works for both custom and regular domains)
         redirect(`/sign-in?return_url=${encodeURIComponent(`/${slug}`)}`)
       }
     }

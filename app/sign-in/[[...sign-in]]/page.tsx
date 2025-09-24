@@ -1,6 +1,13 @@
 import { SignIn } from '@clerk/nextjs'
 
-export default function Page() {
+interface Props {
+  searchParams: Promise<{ return_url?: string }>
+}
+
+export default async function Page({ searchParams }: Props) {
+  const params = await searchParams
+  const returnUrl = params.return_url || '/'
+  
   return (
     <div className="min-h-dvh flex items-center justify-center bg-gray-50/50 relative overflow-hidden">
       {/* Cross grid pattern background */}
@@ -23,6 +30,8 @@ export default function Page() {
         </div>
         <SignIn 
             signUpUrl="https://app.warrn.io/sign-up"
+            fallbackRedirectUrl={returnUrl}
+            forceRedirectUrl={returnUrl}
             appearance={{
                 elements: {
                   card: "bg-white dark:bg-black",

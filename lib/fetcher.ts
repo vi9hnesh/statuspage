@@ -36,6 +36,17 @@ export async function checkStatusPageAuthRequirement(slug: string): Promise<{
   return backendFetcher(endpoint)
 }
 
+// Lookup status page by custom domain
+export async function lookupStatusPageByDomain(domain: string): Promise<{
+  exists: boolean;
+  slug: string | null;
+  name: string | null;
+  requires_auth: boolean;
+}> {
+  const endpoint = `/api/status-pages/auth-check/${encodeURIComponent(domain)}/?lookup_type=domain`
+  return backendFetcher(endpoint)
+}
+
 // Status page specific fetcher that uses slug parameter
 export async function statusPageFetcher<T = any>(slug: string, endpoint: string = "", authToken?: string): Promise<T> {
   const fullEndpoint = `/api/status-pages/public/${slug}/${endpoint}`.replace(/\/+$/, '/') // Ensure trailing slash

@@ -42,6 +42,8 @@ export default function RootLayout({
       appearance={{
         baseTheme: shadcn
       }}
+      signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
     >
       <html lang="en">
         <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
